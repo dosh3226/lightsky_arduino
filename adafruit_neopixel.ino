@@ -41,7 +41,7 @@ int scale_brightness(int fade_level, int value_to_scale) {
 }
 
 // speed range: 5 to 50
-void random_fade(uint32_t num_pixels, int speed, int threads) {
+void single_colour_fade(uint32_t num_pixels, int speed) {
 	
 	uint32_t to_set[num_pixels];
 	
@@ -54,13 +54,17 @@ void random_fade(uint32_t num_pixels, int speed, int threads) {
 		to_set[i] = random(0, led_string_length);
 	}
 	
+	// TODO shift one/threads number of total pixels by one third of max brightness
+	// mod with max brightness so that something that starts bright goes back to dark again
+	
 	int red = random(0, max_brightness);
 	int green = random(0, max_brightness);
 	int blue = random(0, max_brightness);
 	// special conditions for slow fade to reduce jitter at low brightnesses
-	if(speed < 10) {
+	if(speed <= 10) {
 		// fade in
 			Serial.println("fade in");
+			Serial.println(speed, DEC);
 		for(int fade = min_brightness; fade < max_brightness; fade++) {
 			// set pixels
 			// Serial.println(fade, DEC);
@@ -76,6 +80,7 @@ void random_fade(uint32_t num_pixels, int speed, int threads) {
 		
 		// fade out
 			Serial.println("fade out");
+			Serial.println(speed, DEC);
 		for(int fade = max_brightness; fade > min_brightness; fade--) {
 			// set pixels
 			// Serial.println(fade, DEC);
@@ -91,6 +96,7 @@ void random_fade(uint32_t num_pixels, int speed, int threads) {
 	} else {
 		// fade in
 			Serial.println("fade in");
+			Serial.println(speed, DEC);
 		for(int fade = min_brightness; fade < max_brightness; fade=fade+5) {
 			// set pixels
 			// Serial.println(fade, DEC);
@@ -106,6 +112,7 @@ void random_fade(uint32_t num_pixels, int speed, int threads) {
 		
 		// fade out
 			Serial.println("fade out");
+			Serial.println(speed, DEC);
 		for(int fade = max_brightness; fade > min_brightness; fade=fade-5) {
 			// set pixels
 			// Serial.println(fade, DEC);
@@ -122,17 +129,45 @@ void random_fade(uint32_t num_pixels, int speed, int threads) {
 	
 }
 
+// speed range: 5 to 50
+void threaded_fade(uint32_t num_pixels, int speed, int threads) {
+
+	uint32_t pixel_address[num_pixels];
+	// max brightness of pixel
+	uint32_t pixel_max_brightness[num_pixels];
+	// start brightness of pixel
+	uint32_t pixel_start_brightness[num_pixels];
+	uint32_t pixel_colour[num_pixels];
+	
+	// set the led number in the string
+	for(int i = 0; i < num_pixels; i++) {
+		to_set[i] = random(0, led_string_length);
+	}
+
+	// set random start values of pixels in groups of num_pixels/threads
+	// i.e. first third of pixels start at zero, second third start at max_brightness/3, 
+	// last third start at 2/3 of max_brightness
+	
+	
+}
+
 void loop() {
 	// turn off all pixels
 	pixels.clear();
-	// delay(delayval);
-	// for(int i = 0; i < 5; i++) {
-		// random_fade(5, 5, 5);
-		// pixels.clear();
-	// }
-	// for(int i = 0; i < 10000; i++) {
-		random_fade(5, 50, 5);
-		// pixels.clear();
-	// }
-	// delay(delayval);
+	for(int i = 0; i < 5; i++) {
+		single_colour_fade(50, 50);
+		pixels.clear();
+	}
+	for(int i = 0; i < 5; i++) {
+		single_colour_fade(50, 20);
+		pixels.clear();
+	}	
+	for(int i = 0; i < 5; i++) {
+		single_colour_fade(50, 10);
+		pixels.clear();
+	}	
+	for(int i = 0; i < 5; i++) {
+		single_colour_fade(50, 5);
+		pixels.clear();
+	}
 }
