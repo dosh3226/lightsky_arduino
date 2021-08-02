@@ -178,9 +178,9 @@ void single_flash() {
 	for (b = 0; b < 40; b++) {
 		for(i = 0; i < led_string_length; i++) {
 			pixels.setPixelColor(i, pixels.Color(
-				(chain[i].red * b)/100, 
-				(chain[i].green * b)/100, 
-				(chain[i].blue * b)/100));
+				(chain[i].red * b)/400, 
+				(chain[i].green * b)/400, 
+				(chain[i].blue * b)/400));
 		}
 		pixels.show();
 		delay(5);
@@ -189,9 +189,9 @@ void single_flash() {
 	for (b = 40; b > 0; b--) {
 		for(i = 0; i < led_string_length; i++) {
 			pixels.setPixelColor(i, pixels.Color(
-				(chain[i].red * b)/100, 
-				(chain[i].green * b)/100, 
-				(chain[i].blue * b)/100));
+				(chain[i].red * b)/400, 
+				(chain[i].green * b)/400, 
+				(chain[i].blue * b)/400));
 		}
 		pixels.show();
 		delay(5);
@@ -275,7 +275,23 @@ void weird_effect() {
 }
 
 void loop() {
-	weird_effect();
+	
+	for(int i = 0; i < 100; i++) {
+		weird_effect();
+	}
+	for(int i = 0; i < led_string_length; i++) {
+		pixels.setPixelColor(i,pixels.Color(0,0,0));
+	}
+	pixels.show();
+	delay(1000);
+	for(int i = 0; i < 20; i++) {
+		single_flash();
+	}
+	for(int i = 0; i < led_string_length; i++) {
+		pixels.setPixelColor(i,pixels.Color(0,0,0));
+	}
+	pixels.show();
+	delay(1000);
 }
 
 
