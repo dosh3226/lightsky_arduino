@@ -140,7 +140,7 @@ void setup() {
 	}
 
 	// first time group setup
-	group_setup(10, 10);
+	group_setup(3, 10);
 	
 	Serial.println(F("debug print loop start"));
 	// check the setup by printing the array vals to serial
@@ -234,31 +234,40 @@ void weird_effect_fast() {
 }
 
 void weird_effect() {
+	
+	group_setup(10, 10);
+	
 	byte new_r = random(0, 255);
 	byte new_g = random(0, 255);
 	byte new_b = random(0, 255);
 	byte max_brightness = random(1, 10);
 	// check if any groups have flashed once and get new rgb and max_b vals for those pixels
 	for(int i = 0; i < led_string_length; i++) {
-		if(chain[i].curr_brightness >= 30) {
+		if(chain[i].curr_brightness >= 30 && chain[i].max_brightness != 0) {
 			chain[i].red = new_r;
 			chain[i].green = new_g;
 			chain[i].blue = new_b;
 			chain[i].max_brightness = max_brightness;
 			chain[i].curr_brightness = 0;
-		} else {
+		} else if(chain[i].max_brightness != 0) {
 			chain[i].curr_brightness++;
 		}
 	}
 	
 	for(int i = 0; i < led_string_length; i++) {
-		pixels.setPixelColor(i, 
-			pixels.Color(
-				(chain[i].red * chain[i].curr_brightness)/200, 
-				(chain[i].green * chain[i].curr_brightness)/200, 
-				(chain[i].blue * chain[i].curr_brightness)/200
-			)
-		);
+		if(chain[i].max_brightness != 0) {
+			pixels.setPixelColor(i, 
+				pixels.Color(
+					(chain[i].red * chain[i].curr_brightness)/200, 
+					(chain[i].green * chain[i].curr_brightness)/200, 
+					(chain[i].blue * chain[i].curr_brightness)/200
+				)
+			);			
+		} else {
+			pixels.setPixelColor(i, 
+				pixels.Color(0,0,0)
+			);
+		}
 	}
 	
 	pixels.show();
