@@ -198,6 +198,45 @@ void single_flash() {
 	}
 }
 
+void single_flash_slow() {
+	
+	int num_groups = 3;
+	int group_length = 10;
+	
+    // turn off all pixels
+    pixels.clear();
+	
+	Serial.println(F("group_setup"));
+	
+	group_setup(num_groups, group_length);
+	
+	Serial.println(F("out of group_setup"));
+	
+	int b = 0;
+	int i = 0;
+	for (b = 0; b < 40; b++) {
+		for(i = 0; i < led_string_length; i++) {
+			pixels.setPixelColor(i, pixels.Color(
+				(chain[i].red * b)/400, 
+				(chain[i].green * b)/400, 
+				(chain[i].blue * b)/400));
+		}
+		pixels.show();
+		delay(20);
+	}
+	
+	for (b = 40; b > 0; b--) {
+		for(i = 0; i < led_string_length; i++) {
+			pixels.setPixelColor(i, pixels.Color(
+				(chain[i].red * b)/400, 
+				(chain[i].green * b)/400, 
+				(chain[i].blue * b)/400));
+		}
+		pixels.show();
+		delay(20);
+	}
+}
+
 void weird_effect_fast() {
 		
 	group_setup(10, 10);
@@ -278,6 +317,9 @@ void loop() {
 	
 	for(int i = 0; i < 100; i++) {
 		weird_effect();
+	}
+	for(int i = 0; i < 5; i++) {
+		single_flash_slow();
 	}
 	for(int i = 0; i < led_string_length; i++) {
 		pixels.setPixelColor(i,pixels.Color(0,0,0));
